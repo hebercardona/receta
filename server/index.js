@@ -1,7 +1,9 @@
+const {createServer} = require('http');
 const express = require('express');
 const bodyParser = require('body-parser');
 const pdf = require('html-pdf');
-const cors = require('cors');
+//const cors = require('cors');
+const path = require('path');
 
 const pdfTemplate = require('./documents');
 
@@ -9,8 +11,8 @@ const app = express();
 
 const port = process.env.PORT || 5000;
 
-
-app.use(cors());
+app.use(express.static(path.join(__dirname, 'build')));
+//app.use(cors());
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 app.use(express.static('public'))
@@ -32,5 +34,9 @@ app.get('/fetch-pdf', (req, res) => {
 app.get('/image', (req, res) => {
     res.sendFile(`${__dirname}/public/images/logo.jpg`)
 })
+
+app.get('/*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'build', 'index.html'));
+  });
 
 app.listen(port, () => console.log(`Listening on port ${port}`));
